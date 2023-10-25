@@ -5,22 +5,22 @@ date: "2023-10-25"
 output: html_document
 ---
 
-Análisis del programa: Mi Pieza, un plan de asistencia económica a escala nacional para refacciones, mejoras y/o ampliación de la vivienda.
+## Análisis del programa: Mi Pieza, un plan de asistencia económica a escala nacional para refacciones, mejoras y/o ampliación de la vivienda.
 
-# La línea Mi Pieza está destinada a mujeres, mayores de 18 años, residentes en Barrios Populares del RENABAP, argentinas o con residencia permanente. ¿Cómo funciona Mi Pieza? Se otargan a través de un sistema de sorteo, asistencias económicas de un monto entre 250 y 600 mil pesos en dos desmbolsos del 50% cada uno. El primero al salir sorteada y el segundoal demostrar mediante una app cierto avance de obra.
-#¿Qué obras se pueden realizar con Mi Pieza?
-#- Mejoramiento de techo / paredes / pisos / aberturas.
-#- División de interiores.
-#- Refacciones menores de plomería y/o electricidad.
-#- Ampliación de vivienda.
+La línea Mi Pieza está destinada a mujeres, mayores de 18 años, residentes en Barrios Populares del RENABAP, argentinas o con residencia permanente. ¿Cómo funciona Mi Pieza? Se otargan a través de un sistema de sorteo, asistencias económicas de un monto entre 250 y 600 mil pesos en dos desmbolsos del 50% cada uno. El primero al salir sorteada y el segundoal demostrar mediante una app cierto avance de obra.
+¿Qué obras se pueden realizar con Mi Pieza?
+- Mejoramiento de techo / paredes / pisos / aberturas.
+- División de interiores.
+- Refacciones menores de plomería y/o electricidad.
+- Ampliación de vivienda.
 
-# Propongo a través de la organización y mapeo de los datos, contestarnos ciertas preguntas que creo pueden resultar interesantes: 
+Propongo a través de la organización y mapeo de los datos, contestarnos ciertas preguntas que creo pueden resultar interesantes: 
 
-#1_ Cuantificar en el territorio por provincia la cantidad de inscriptas al plan y preguntarnos: ¿Hay algún sesgo en el sorteo? ¿Cómo es la relación de postuladas con quienes salieron sorteadas en cada provincia?
+1_ Cuantificar en el territorio por provincia la cantidad de inscriptas al plan y preguntarnos: ¿Hay algún sesgo en el sorteo? ¿Cómo es la relación de postuladas con quienes salieron sorteadas en cada provincia?
 
-#2_ Ya que conocemos el destino del crédito en el caso de cada postulante, ¿Cuál fue el destino más común ?
+2_ Ya que conocemos el destino del crédito en el caso de cada postulante, ¿Cuál fue el destino más común ?
 
-#3_ Ya que conocemos la cantidad de habitantes por vivienda que declara cada postulante y la superficie en m2 de sus viviendas, podemos conocer también la situación de hacinamiento existente o no en cada caso y cuantificarla. 
+3_ Ya que conocemos la cantidad de habitantes por vivienda que declara cada postulante y la superficie en m2 de sus viviendas, podemos conocer también la situación de hacinamiento existente o no en cada caso y cuantificarla. 
 
 # Para comenzar vamos a cargar las librerías a utilizar y nuestras bases de datos, la primera es la públicada por el programa de asistencia Mi Pieza, y la segunda, la que nos permite geolocalizar a través de polígonos a las provincias Argentinas.
 
@@ -41,7 +41,7 @@ mi_pieza <- readr::read_csv("C:/Users/Usuario/OneDrive - Amplity Health/Escritor
 provincias_argentinas <-sf::read_sf("C:/Users/Usuario/OneDrive - Amplity Health/Escritorio/Lula/TP-FINAL/DATA/provincias/provincia.shp")
 ```
 
-# 1_Preparamos el archivo de observaciones agrupadas por provincia y unificamos los estados de: seleccionada y activa, ya que ambos estados corresponden a quienes salieron sorteadas. Asi luego podremos relacionar la cantidad de inscriptas por provincia con la cantidad de seleccionadas. 
+1_Preparamos el archivo de observaciones agrupadas por provincia y unificamos los estados de: seleccionada y activa, ya que ambos estados corresponden a quienes salieron sorteadas. Asi luego podremos relacionar la cantidad de inscriptas por provincia con la cantidad de seleccionadas. 
 
 ```{r}
 mp_prov_<-mi_pieza %>%
@@ -67,7 +67,7 @@ mi_pieza_prov_select <-rename (mi_pieza_prov_select, cant_selecc = cantidad)
 mp_prov_ <- dplyr::left_join(mp_prov_, mi_pieza_prov_select, by="provincia")
 ```
 
-# Ahora vamos a limpiar los datos de las provincias para prepararlos para hacer un join con la tabla de Mi pieza y asi otorgarle a cada provincia un poligono:
+Ahora vamos a limpiar los datos de las provincias para prepararlos para hacer un join con la tabla de Mi pieza y asi otorgarle a cada provincia un poligono:
 ```{r}
 provincias_poligonos <- dplyr::select(provincias_argentinas,nam,geometry)
 provincias_poligonos <- dplyr::rename(provincias_poligonos, provincia = nam)
@@ -76,14 +76,14 @@ provincias_poligonos$provincia[provincias_poligonos$provincia == "Tierra del Fue
 ```
 
 
-# Hago un left join para quedarme como base tabla datos de Mi pieza y le agrego a través del join una columna que le asigna un polígono a cada provincia
+Hago un left join para quedarme como base tabla datos de Mi pieza y le agrego a través del join una columna que le asigna un polígono a cada provincia
 ```{r}
 mi_pieza_provincias <- dplyr::left_join(mp_prov_, provincias_poligonos, by="provincia")
 mi_pieza_provincias <- mutate (mi_pieza_provincias, ratio_selecc = cant_selecc/cantidad)
 ```
 
 
-# Usamos geom_sf para mostrar un mapa dónde se vea el ratio de asignación por provincia, y asi ver si hubo algún sesgo de selección.
+Usamos geom_sf para mostrar un mapa dónde se vea el ratio de asignación por provincia, y asi ver si hubo algún sesgo de selección.
 ```{r}
 
 library(ggrepel)
@@ -98,12 +98,12 @@ geom_text_repel(aes(label = provincia, geometry = geometry),
   theme(axis.text=element_blank())+
    theme(axis.title=element_blank())
 ```
-# El ratio de asignación por provincia no muestra grandes disparidades entre sí.
+El ratio de asignación por provincia no muestra grandes disparidades entre sí.
 
 
-# 2_ Ya que conocemos el destino del crédito en el caso de cada postulante, ¿Cuál fue el destino más común ?
+2_ Ya que conocemos el destino del crédito en el caso de cada postulante, ¿Cuál fue el destino más común ?
 
-# Primero queremos saber individualmente cuáles fueron los usos destinados a la asistencia económica específicamente. Como hay usuarias que declaran en simultaneo más de un uso, entonces desdoblamos esos usos y generamos una observación para cada tipo de uso por participante. Asi luego podremos sumarlos y compararlos:
+Primero queremos saber individualmente cuáles fueron los usos destinados a la asistencia económica específicamente. Como hay usuarias que declaran en simultaneo más de un uso, entonces desdoblamos esos usos y generamos una observación para cada tipo de uso por participante. Asi luego podremos sumarlos y compararlos:
 
 
 ```{r}
@@ -141,10 +141,10 @@ geom_treemap_text(colour = "white",
 
 ```
 
-# El destino predominante es la ampliación. Ahora, ¿Qué pasa si agrupamos todos los usos referidos a Mejoramientos y Reformas y lo comparamos con la Ampliación?
-#De esta manera podremos tener un panorama de que resulta más urgente para las participantes en general, si ampliar por falta de espacio o Mejorar las condiciones de la vivienda. Está claro, que por la suma de dinero que otorga el programa no se puede optar por ambas opciones.
+El destino predominante es la ampliación. Ahora, ¿Qué pasa si agrupamos todos los usos referidos a Mejoramientos y Reformas y lo comparamos con la Ampliación?
+De esta manera podremos tener un panorama de que resulta más urgente para las participantes en general, si ampliar por falta de espacio o Mejorar las condiciones de la vivienda. Está claro, que por la suma de dinero que otorga el programa no se puede optar por ambas opciones.
 
-#Vamos a ver entonces la comparación de estos dos grupos y para esto volvemos a agrupar la base de datos original, con el número de observaciones inicial de Mi Pieza:
+Vamos a ver entonces la comparación de estos dos grupos y para esto volvemos a agrupar la base de datos original, con el número de observaciones inicial de Mi Pieza:
 
 ```{r}
 options(scipen=999)
@@ -172,11 +172,11 @@ ggplot(mp_agrupado_conteo, aes(x=tipo_obra, y=cantidad, fill = tipo_obra)) +
 ```
 
 
-#3_ Ya que conocemos la cantidad de habitantes por vivienda que declara cada postulante y la cantidad de ambientes de sus viviendas, podemos conocer también la situación de hacinamiento existente o no en cada caso y cuantificarla. ¿Cómo es este índice de nivel de hacinamiento si lo miramos por provincia?
+3_ Ya que conocemos la cantidad de habitantes por vivienda que declara cada postulante y la cantidad de ambientes de sus viviendas, podemos conocer también la situación de hacinamiento existente o no en cada caso.
 
-# Según el INDEC: El Hacinamiento representa el cociente entre la cantidad total de personas del hogar y la cantidad total de habitaciones o piezas de las que dispone el mismo, se considera Hacinamiento crítico cuando los hogares presentan más de tres personas por cuarto.
+Según el INDEC: El Hacinamiento representa el cociente entre la cantidad total de personas del hogar y la cantidad total de habitaciones o piezas de las que dispone el mismo, se considera Hacinamiento crítico cuando los hogares presentan más de tres personas por cuarto.
 
-# Se me ocurre como interesante buscar alguna relación entre la decisión de optar por hacer una obra de tipo: Ampliación y la condicipon existente del hacinamiento, al haber mas de 3 personas por ambiente en la vivienda.
+Se me ocurre como interesante buscar alguna relación entre la decisión de optar por hacer una obra de tipo: Ampliación y la condicipon existente del hacinamiento, al haber mas de 3 personas por ambiente en la vivienda.
 
 
 ```{r}
@@ -205,5 +205,5 @@ ggplot(mp_h_3, aes(x=tipo_obra, y=ratio_hacinamiento, fill = tipo_obra)) +
 
 
 ```
-# Es clara la relación entre el nivel de hacinamiento en la vivienda y la elección del tipo de obra. El 30% de los hogares que eligieron Ampliar estaban hacinados, mientras que solo el 18% de los que decidieron reformar lo estaba.
+Como conclusión: Es clara la relación entre el nivel de hacinamiento en la vivienda y la elección del tipo de obra. El 30% de los hogares que eligieron Ampliar estaban hacinados, mientras que solo el 18% de los que decidieron reformar lo estaba.
 
