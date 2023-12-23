@@ -35,7 +35,7 @@ library(treemapify)
 ```
 
 ```{r}
-mi_pieza <- readr::read_csv("C:/Users/Usuario/OneDrive - Amplity Health/Escritorio/Lula/TP-FINAL/DATA/mi-pieza-2023-10-04.csv")
+mi_pieza <- readr::read_csv("https://datosabiertos.desarrollosocial.gob.ar/dataset/abdbf19f-e388-4393-933f-316216611e8c/resource/bb4d6278-b696-4dc5-a5e5-4c5bd08f5301/download/mi-pieza-2023-10-04.csv")
 ```
 ```{r}
 provincias_argentinas <-sf::read_sf("C:/Users/Usuario/OneDrive - Amplity Health/Escritorio/Lula/TP-FINAL/DATA/provincias/provincia.shp")
